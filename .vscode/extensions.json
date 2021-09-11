@@ -1,0 +1,9 @@
+{
+  "recommendations": [
+    "johnpapa.angular-essentials",
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "yzhang.markdown-all-in-one",
+    "davidanson.vscode-markdownlint"
+  ]
+}
