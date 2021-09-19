@@ -1,0 +1,98 @@
+<h2 class="break-all">Account</h2>
+<ng-container *ngIf="account$ | async as account">
+  <ng-container
+    *ngIf="
+      account.address === undefined || null;
+      then emptyAddress;
+      else existAddress
+    "
+  ></ng-container>
+  <ng-template #emptyAddress></ng-template>
+  <ng-template #existAddress>
+    <div class="flex-grow">
+      <mat-card>
+        <mat-card-header>
+          <h3>Address</h3>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="flex-wrap">
+            <span class="break-all">
+              {{ account.address }}
+            </span>
+            <button
+              class="hover:opacity-75"
+              mat-icon-button
+              color="primary"
+              (click)="copyClipboard('Address', account.address)"
+            >
+              <mat-icon>content_copy</mat-icon>
+            </button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </ng-template>
+  <ng-container
+    *ngIf="
+      account.publicKey === undefined || null;
+      then emptyPublicKey;
+      else existPublicKey
+    "
+  ></ng-container>
+  <ng-template #emptyPublicKey></ng-template>
+  <ng-template #existPublicKey>
+    <div class="flex-grow">
+      <mat-card>
+        <mat-card-header>
+          <h3>Public Key</h3>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="flex-wrap">
+            <span class="break-all">
+              {{ account.publicKey }}
+            </span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </ng-template>
+</ng-container>
+<ng-container *ngIf="mosaics$ | async as mosaics">
+  <ng-container
+    *ngIf="mosaics === null || undefined; then emptyMosaics; else existMosaics"
+  ></ng-container>
+  <ng-template #emptyMosaics></ng-template>
+  <ng-template #existMosaics>
+    <div class="flex-shrink">
+      <mat-card>
+        <mat-card-header>
+          <h3>Mosaics</h3>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="flex-wrap mat-elevation-z8">
+            <table mat-table [dataSource]="mosaics">
+              <ng-container matColumnDef="id">
+                <th mat-header-cell *matHeaderCellDef>ID</th>
+                <td mat-cell *matCellDef="let element">{{ element.id }}</td>
+              </ng-container>
+              <ng-container matColumnDef="relativeAmount">
+                <th mat-header-cell *matHeaderCellDef>Relative Amount</th>
+                <td mat-cell *matCellDef="let element">
+                  {{ element.relativeAmount }}
+                </td>
+              </ng-container>
+              <tr
+                mat-header-row
+                *matHeaderRowDef="mosaicsDisplayedColumns"
+              ></tr>
+              <tr
+                mat-row
+                *matRowDef="let row; columns: mosaicsDisplayedColumns"
+              ></tr>
+            </table>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </ng-template>
+</ng-container>

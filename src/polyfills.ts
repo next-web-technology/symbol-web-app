@@ -62,3 +62,6 @@ import 'zone.js'; // Included with Angular CLI.
 /***************************************************************************************************
  * APPLICATION IMPORTS
  */
+
+// symbol-sdk
+(window as any).global = window;

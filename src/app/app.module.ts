@@ -9,7 +9,7 @@ import { ViewMaterialModule } from './view/material.module';
 
 import { PageModule } from './page/page.module';
 import { ViewModule } from './view/view.module';
-import { WidgetModule } from './widget/widget.module';
+import { PartModule } from './part/part.module';
 
 @NgModule({
   declarations: [AppComponent],
@@ -20,7 +20,7 @@ import { WidgetModule } from './widget/widget.module';
     ViewMaterialModule,
     PageModule,
     ViewModule,
-    WidgetModule,
+    PartModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
