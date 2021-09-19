@@ -7,6 +7,11 @@ const routes: Routes = [
     path: '',
     component: ExplorerComponent,
   },
+  {
+    path: 'accounts',
+    loadChildren: () =>
+      import('./accounts/accounts.module').then((m) => m.AccountsModule),
+  },
 ];
 
 @NgModule({
