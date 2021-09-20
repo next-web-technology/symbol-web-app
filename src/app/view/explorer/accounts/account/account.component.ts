@@ -11,7 +11,7 @@ import { Mosaic } from 'src/app/model/mosaic/mosaic.model';
   styleUrls: ['./account.component.css'],
 })
 export class ViewAccountComponent implements OnInit {
-  mosaicsDisplayedColumns: string[] = ['id', 'relativeAmount'];
+  mosaicsDisplayedColumns: string[] = ['icon', 'relativeAmount', 'name', 'id'];
 
   @Input() account$?: Observable<Account>;
   @Input() mosaics$?: Observable<Mosaic[]>;
