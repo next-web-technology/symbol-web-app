@@ -3,4 +3,5 @@ export type Mosaic = {
   name?: string;
   amount: bigint;
   relativeAmount?: number;
+  icon?: string;
 };

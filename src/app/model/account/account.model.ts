@@ -3,4 +3,5 @@ export type Account = {
   address: string;
   publicKey?: string;
   importance?: bigint;
+  relativeImportance?: number;
 };

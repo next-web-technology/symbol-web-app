@@ -56,6 +56,30 @@
       </mat-card>
     </div>
   </ng-template>
+  <ng-container
+    *ngIf="
+      account.relativeImportance === undefined || null;
+      then emptyRelativeImportance;
+      else existRelativeImportance
+    "
+  ></ng-container>
+  <ng-template #emptyRelativeImportance></ng-template>
+  <ng-template #existRelativeImportance>
+    <div class="flex-grow">
+      <mat-card>
+        <mat-card-header>
+          <h3>Importance</h3>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="flex-wrap">
+            <span class="break-all">
+              {{ account.relativeImportance | percent: "1.0-6" }}
+            </span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </ng-template>
 </ng-container>
 <ng-container *ngIf="mosaics$ | async as mosaics">
   <ng-container
@@ -71,15 +95,35 @@
         <mat-card-content>
           <div class="flex-wrap mat-elevation-z8">
             <table mat-table [dataSource]="mosaics">
-              <ng-container matColumnDef="id">
-                <th mat-header-cell *matHeaderCellDef>ID</th>
-                <td mat-cell *matCellDef="let element">{{ element.id }}</td>
+              <ng-container matColumnDef="icon">
+                <th mat-header-cell *matHeaderCellDef>Icon</th>
+                <td mat-cell *matCellDef="let element">
+                  <ng-container
+                    *ngIf="
+                      element.icon === undefined || null;
+                      then emptyIcon;
+                      else existIcon
+                    "
+                  ></ng-container>
+                  <ng-template #emptyIcon></ng-template>
+                  <ng-template #existIcon>
+                    <img class="object-scale-down" src="{{ element.icon }}" />
+                  </ng-template>
+                </td>
               </ng-container>
               <ng-container matColumnDef="relativeAmount">
                 <th mat-header-cell *matHeaderCellDef>Relative Amount</th>
                 <td mat-cell *matCellDef="let element">
                   {{ element.relativeAmount }}
                 </td>
+              </ng-container>
+              <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef>Name</th>
+                <td mat-cell *matCellDef="let element">{{ element.name }}</td>
+              </ng-container>
+              <ng-container matColumnDef="id">
+                <th mat-header-cell *matHeaderCellDef>ID</th>
+                <td mat-cell *matCellDef="let element">{{ element.id }}</td>
               </ng-container>
               <tr
                 mat-header-row
