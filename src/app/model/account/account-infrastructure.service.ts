@@ -3,7 +3,7 @@ import { NodeService } from '../node/node.service';
 import * as symbolSdk from 'symbol-sdk';
 import { BehaviorSubject, Observable, of, zip } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
-import { Account } from './account.model';
+import { Account, AccountSearchCriteria } from './account.model';
 import { InterfaceAccountInfrastructureService } from './account.service';
 
 @Injectable({
@@ -15,10 +15,11 @@ export class AccountInfrastructureService
   private repositoryFactoryHttp$: BehaviorSubject<symbolSdk.RepositoryFactoryHttp>;
   private accountRepository$: BehaviorSubject<symbolSdk.AccountRepository>;
   private networkRepository$: BehaviorSubject<symbolSdk.NetworkRepository>;
-  private totalChainImportance$?: Observable<string>;
   private accountService$: BehaviorSubject<symbolSdk.AccountService>;
   private accountInfoResolvedMosaic$?: Observable<symbolSdk.AccountInfoResolvedMosaic>;
+  private totalChainImportance$?: Observable<string>;
   private account$?: Observable<Account>;
+  private accountsPageLength$?: Observable<number>;
 
   constructor(private nodeService: NodeService) {
     this.repositoryFactoryHttp$ = new BehaviorSubject(
@@ -95,5 +96,24 @@ export class AccountInfrastructureService
       })
     );
     return this.account$;
+  }
+
+  getAccounts$(
+    accountSearchCriteria: AccountSearchCriteria
+  ): Observable<Account[]> {
+    return this.accountRepository$.pipe(
+      mergeMap((accountRepository) => {
+        return accountRepository.search(accountSearchCriteria);
+      }),
+      map((accounts) => {
+        return accounts.data.map((account) => {
+          return {
+            isValid: true,
+            address: account.address.plain(),
+            publicKey: account.publicKey.toString(),
+          };
+        });
+      })
+    );
   }
 }

@@ -5,3 +5,8 @@ export type Account = {
   importance?: bigint;
   relativeImportance?: number;
 };
+
+export type AccountSearchCriteria = {
+  pageSize: number;
+  pageNumber: number;
+};
