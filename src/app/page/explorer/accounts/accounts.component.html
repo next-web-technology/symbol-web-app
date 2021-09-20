@@ -1,2 +1,9 @@
-<p>accounts works!</p>
-<app-view-accounts></app-view-accounts>
+<app-view-accounts
+  [accounts$]="accounts$"
+  [pageSize$]="pageSize$"
+  [pageNumber$]="pageNumber$"
+  [pageLength$]="pageLength$"
+  [pageSizeOptions]="pageSizeOptions"
+  (moveToAccountDetailPage)="appMoveToAccountDetailPage($event)"
+  (pagenationChange)="appPagenationChanged($event)"
+></app-view-accounts>

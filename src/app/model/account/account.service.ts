@@ -1,10 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AccountInfrastructureService } from './account-infrastructure.service';
-import { Account } from './account.model';
+import { Account, AccountSearchCriteria } from './account.model';
 
 export interface InterfaceAccountInfrastructureService {
   getAccount$: (address: string) => Observable<Account>;
+  getAccounts$: (
+    accountSearchCriteria: AccountSearchCriteria
+  ) => Observable<Account[]>;
 }
 
 @Injectable({
@@ -23,5 +26,13 @@ export class AccountService {
 
   getAccount$(address: string): Observable<Account> {
     return this.accountInfrastructureService.getAccount$(address);
+  }
+
+  getAccounts$(
+    accountSearchCriteria: AccountSearchCriteria
+  ): Observable<Account[]> {
+    return this.accountInfrastructureService.getAccounts$(
+      accountSearchCriteria
+    );
   }
 }

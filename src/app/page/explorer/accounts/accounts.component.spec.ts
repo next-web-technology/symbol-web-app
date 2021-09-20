@@ -1,5 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
+import { RouterTestingModule } from '@angular/router/testing';
+import { OverlayModule } from '@angular/cdk/overlay';
 import { of } from 'rxjs';
 
 import { AccountsComponent } from './accounts.component';
@@ -11,19 +14,18 @@ describe('AccountsComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [AccountsComponent],
+      imports: [RouterTestingModule, OverlayModule],
       providers: [
         {
           provide: ActivatedRoute,
           useValue: {
             queryParams: of({
-              pageSize: 100,
+              pageSize: 10,
               pageNumber: 1,
-              order: 'desc',
-              orderBy: 'balance',
-              mosaicId: '310378C18A140D1B',
             }),
           },
         },
+        MatSnackBar,
       ],
     }).compileComponents();
   });

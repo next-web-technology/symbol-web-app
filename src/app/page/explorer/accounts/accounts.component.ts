@@ -1,7 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { PageEvent } from '@angular/material/paginator';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ActivatedRoute, Router } from '@angular/router';
+import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
+import { mergeMap } from 'rxjs/operators';
+import {
+  Account,
+  AccountSearchCriteria,
+} from 'src/app/model/account/account.model';
+import { AccountService } from 'src/app/model/account/account.service';
 
 @Component({
   selector: 'app-accounts',
@@ -9,14 +16,23 @@ import { map } from 'rxjs/operators';
   styleUrls: ['./accounts.component.css'],
 })
 export class AccountsComponent implements OnInit {
+  pageSizeOptions = [10, 20, 50, 100];
   pageSize$: BehaviorSubject<number> = new BehaviorSubject(10);
   pageNumber$: BehaviorSubject<number> = new BehaviorSubject(1);
-  order$: BehaviorSubject<string> = new BehaviorSubject('desc');
-  orderBy$: BehaviorSubject<string> = new BehaviorSubject('balance');
-  // xembook.tomato
-  mosaicId$: BehaviorSubject<string> = new BehaviorSubject('310378C18A140D1B');
+  accountSearchCriteria$: BehaviorSubject<AccountSearchCriteria> =
+    new BehaviorSubject({
+      pageSize: 10,
+      pageNumber: 1,
+    });
+  pageLength$: BehaviorSubject<number> = new BehaviorSubject(1000);
+  accounts$: Observable<Account[]>;
 
-  constructor(private route: ActivatedRoute) {
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private accountService: AccountService,
+    private snackBar: MatSnackBar
+  ) {
     this.route.queryParams.subscribe((queryParams) => {
       if (queryParams.pageSize) {
         this.pageSize$.next(queryParams.pageSize);
@@ -24,19 +40,40 @@ export class AccountsComponent implements OnInit {
       if (queryParams.pageNumber) {
         this.pageNumber$.next(queryParams.pageNumber);
       }
-      if (queryParams.order) {
-        this.order$.next(queryParams.order);
-      }
-      if (queryParams.orderBy) {
-        this.orderBy$.next(queryParams.orderBy);
-      }
-      if (queryParams.mosaicId) {
-        this.mosaicId$.next(queryParams.mosaicId);
-      }
     });
+    combineLatest([this.pageSize$, this.pageNumber$]).subscribe(
+      ([pageSize, pageNumber]) => {
+        const accountSearchCriteria: AccountSearchCriteria = {
+          pageSize,
+          pageNumber,
+        };
+        this.accountSearchCriteria$.next(accountSearchCriteria);
+      }
+    );
+    this.accounts$ = this.accountSearchCriteria$.pipe(
+      mergeMap((accountSearchCriteria) => {
+        return this.accountService.getAccounts$(accountSearchCriteria);
+      })
+    );
   }
 
   ngOnInit(): void {
     console.log('ngOnInit AccountsComponent');
+  }
+
+  appMoveToAccountDetailPage(address: string): void {
+    if (this.accountService.checkAddressIsValid(address)) {
+      this.router.navigate([`/explorer/accounts/${address}`]);
+    } else {
+      this.snackBar.open('Invalid Address!', undefined, {
+        duration: 3000,
+      });
+    }
+  }
+
+  appPagenationChanged(pageEvent: PageEvent): void {
+    this.pageSize$.next(pageEvent.pageSize);
+    this.pageNumber$.next(pageEvent.pageIndex + 1);
+    this.pageLength$.next(pageEvent.length);
   }
 }
