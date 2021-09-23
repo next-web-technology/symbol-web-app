@@ -103,6 +103,12 @@ export const MAINNET_HTTP_NODES: Node[] = [
   {
     network: 'mainnet',
     protocol: 'http',
+    domain: 'a.symbol.lcnem.net',
+    port: 3000,
+  },
+  {
+    network: 'mainnet',
+    protocol: 'http',
     domain: 'sym-main-01.opening-line.jp',
     port: 3000,
   },

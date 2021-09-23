@@ -103,15 +103,15 @@ export class BlockInfrastructureService {
   }
 
   getBlock$(height: bigint): Observable<Block> {
+    this.blockInfo$ = this.getBlockInfo$(height);
     this.networkConfiguration$ = this.networkRepository$.pipe(
       mergeMap((networkRepository) => networkRepository.getNetworkProperties())
     );
-    this.blockInfo$ = this.getBlockInfo$(height);
     return combineLatest([this.blockInfo$, this.networkConfiguration$]).pipe(
       map(([blockInfo, networkConfiguration]) => {
         console.log(networkConfiguration);
         console.log(blockInfo);
-        const date =
+        const unixTimestampMilliseconds =
           parseInt(blockInfo.timestamp.toString()) +
           1000 *
             (networkConfiguration.network.epochAdjustment
@@ -121,7 +121,7 @@ export class BlockInfrastructureService {
           height: BigInt(blockInfo.height.toString()),
           hash: blockInfo.hash,
           timestamp: blockInfo.timestamp.toString(),
-          date: new Date(date),
+          date: new Date(unixTimestampMilliseconds),
           beneficiaryAddress: blockInfo.beneficiaryAddress.plain(),
           signerAddress: blockInfo.signer.address.plain(),
           fee: BigInt(blockInfo.totalFee.toString()),

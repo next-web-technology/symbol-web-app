@@ -19,7 +19,6 @@ export class AccountInfrastructureService
   private accountInfoResolvedMosaic$?: Observable<symbolSdk.AccountInfoResolvedMosaic>;
   private totalChainImportance$?: Observable<string>;
   private account$?: Observable<Account>;
-  private accountsPageLength$?: Observable<number>;
 
   constructor(private nodeService: NodeService) {
     this.repositoryFactoryHttp$ = new BehaviorSubject(
