@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
+import { Block } from 'src/app/model/block/block.model';
 
 @Component({
   selector: 'app-view-block',
@@ -6,6 +8,8 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./block.component.css'],
 })
 export class ViewBlockComponent implements OnInit {
+  @Input() block$?: Observable<Block>;
+
   constructor() {}
 
   ngOnInit(): void {
