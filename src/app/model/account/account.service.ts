@@ -4,6 +4,7 @@ import { AccountInfrastructureService } from './account-infrastructure.service';
 import { Account, AccountSearchCriteria } from './account.model';
 
 export interface InterfaceAccountInfrastructureService {
+  checkAddressIsValid: (address: string) => boolean;
   getAccount$: (address: string) => Observable<Account>;
   getAccounts$: (
     accountSearchCriteria: AccountSearchCriteria
