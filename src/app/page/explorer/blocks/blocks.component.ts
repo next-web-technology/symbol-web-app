@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { PageEvent } from '@angular/material/paginator';
 import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
@@ -66,7 +67,14 @@ export class BlocksComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('ngOnInit BlocksComponent');
-    this.blocks$.subscribe((blocks) => console.log(blocks));
+    this.blocks$.subscribe((blocks) => {
+      this.pageLength$.next(parseInt(blocks.latestBlockHeight.toString()));
+    });
+  }
+
+  appPagenationChange(pageEvent: PageEvent): void {
+    this.pageSize$.next(pageEvent.pageSize);
+    this.pageSize$.next(pageEvent.pageIndex + 1);
+    this.pageLength$.next(pageEvent.length);
   }
 }
