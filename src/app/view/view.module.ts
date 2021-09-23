@@ -4,6 +4,7 @@ import { ViewHomeModule } from './home/home.module';
 import { ViewExplorerModule } from './explorer/explorer.module';
 import { ViewAccountsModule } from './explorer/accounts/accounts.module';
 import { ViewAccountModule } from './explorer/accounts/account/account.module';
+import { ViewBlocksModule } from './explorer/blocks/blocks.module';
 
 @NgModule({
   declarations: [],
@@ -13,6 +14,7 @@ import { ViewAccountModule } from './explorer/accounts/account/account.module';
     ViewExplorerModule,
     ViewAccountsModule,
     ViewAccountModule,
+    ViewBlocksModule,
   ],
 })
 export class ViewModule {}

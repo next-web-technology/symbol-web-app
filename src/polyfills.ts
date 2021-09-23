@@ -65,3 +65,4 @@ import 'zone.js'; // Included with Angular CLI.
 
 // symbol-sdk
 (window as any).global = window;
+global.Buffer = global.Buffer || require('buffer').Buffer;

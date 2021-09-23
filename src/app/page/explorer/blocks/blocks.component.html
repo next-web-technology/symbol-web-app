@@ -1,0 +1,10 @@
+<app-view-blocks
+  [pageSizeOptions]="pageSizeOptions"
+  [pageSize$]="pageSize$"
+  [pageNumber$]="pageNumber$"
+  [pageLength$]="pageLength$"
+  [order$]="order$"
+  [orderBy$]="orderBy$"
+  [blocks$]="blocks$"
+  (blocksPagenationChange)="appPagenationChange($event)"
+></app-view-blocks>
