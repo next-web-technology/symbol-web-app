@@ -7,14 +7,61 @@
   <ng-template #existBlocks>
     <mat-card>
       <mat-card-content>
+        <h3 class="inline-flex">Move to Block Detail Page</h3>
+        <form
+          #formRef="ngForm"
+          class="flex-wrap"
+          (submit)="onMoveToBlockDetailPage(heightRef.value)"
+        >
+          <mat-form-field class="flex p-6">
+            <mat-label>Height</mat-label>
+            <input
+              #heightRef
+              name="height"
+              ngModel
+              matInput
+              placeholder="Input Block Height"
+              pattern="^[0-9]+"
+              required
+            />
+          </mat-form-field>
+          <button
+            class="flex p-6"
+            mat-flat-button
+            color="primary"
+            [disabled]="formRef.invalid"
+          >
+            Move
+          </button>
+        </form>
+      </mat-card-content>
+    </mat-card>
+    <mat-card>
+      <mat-card-content>
         <h3 class="inline-flex">Latest Block</h3>
-        <div>{{ blocks.latestBlockHeight }}</div>
+        <mat-nav-list>
+          <a
+            mat-list-item
+            routerLink="/explorer/blocks/{{ blocks.latestBlockHeight }}"
+          >
+            {{ blocks.latestBlockHeight }}
+          </a>
+        </mat-nav-list>
       </mat-card-content>
     </mat-card>
     <mat-card>
       <mat-card-content>
         <h3 class="inline-flex">Latest Finalized Block</h3>
-        <div>{{ blocks.latestFinalizedBlockHeight }}</div>
+        <mat-nav-list>
+          <a
+            mat-list-item
+            routerLink="/explorer/blocks/{{
+              blocks.latestFinalizedBlockHeight
+            }}"
+          >
+            {{ blocks.latestFinalizedBlockHeight }}
+          </a>
+        </mat-nav-list>
       </mat-card-content>
     </mat-card>
     <mat-card>
@@ -23,7 +70,14 @@
         <table mat-table [dataSource]="blocks.data">
           <ng-container matColumnDef="height">
             <th mat-header-cell *matHeaderCellDef>Height</th>
-            <td mat-cell *matCellDef="let element">{{ element.height }}</td>
+            <td mat-cell *matCellDef="let element">
+              <a
+                class="hover:opacity-75"
+                routerLink="/explorer/blocks/{{ element.height }}"
+              >
+                {{ element.height }}
+              </a>
+            </td>
           </ng-container>
           <ng-container matColumnDef="timestamp">
             <th mat-header-cell *matHeaderCellDef>Timestamp</th>

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
 import { Blocks, BlockSearchCriteria } from 'src/app/model/block/block.model';
@@ -29,6 +29,7 @@ export class BlocksComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private blockService: BlockService
   ) {
     this.route.queryParams.subscribe((queryParams) => {
@@ -72,9 +73,13 @@ export class BlocksComponent implements OnInit {
     });
   }
 
+  appMoveToBlockDetailPage(height: bigint): void {
+    this.router.navigate([`/explorer/blocks/${height}`]);
+  }
+
   appPagenationChange(pageEvent: PageEvent): void {
     this.pageSize$.next(pageEvent.pageSize);
-    this.pageSize$.next(pageEvent.pageIndex + 1);
+    this.pageNumber$.next(pageEvent.pageIndex + 1);
     this.pageLength$.next(pageEvent.length);
   }
 }

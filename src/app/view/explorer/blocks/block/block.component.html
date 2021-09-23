@@ -1,0 +1,42 @@
+<h2>Block</h2>
+<ng-container *ngIf="block$ | async as block">
+  <ng-container
+    *ngIf="block === null || undefined; then emptyBlock; else existBlock"
+  ></ng-container>
+  <ng-template #emptyBlock></ng-template>
+  <ng-template #existBlock>
+    <mat-list>
+      <mat-list-item class="break-all">
+        Height: {{ block.height }}
+      </mat-list-item>
+      <mat-list-item class="break-all"> Hash: {{ block.hash }} </mat-list-item>
+      <mat-list-item class="break-all">
+        Timestamp: {{ block.timestamp }}
+      </mat-list-item>
+      <mat-list-item class="break-all"> Date: {{ block.date }} </mat-list-item>
+    </mat-list>
+    <mat-nav-list>
+      <mat-list-item class="break-all">
+        <a routerLink="/explorer/accounts/{{ block.beneficiaryAddress }}">
+          Beneficiary Address: {{ block.beneficiaryAddress }}
+        </a>
+      </mat-list-item>
+      <mat-list-item class="break-all">
+        <a routerLink="/explorer/accounts/{{ block.signerAddress }}">
+          Signer Address: {{ block.signerAddress }}
+        </a>
+      </mat-list-item>
+    </mat-nav-list>
+    <mat-list>
+      <mat-list-item class="break-all">
+        Fee: {{ block.fee }} [uXYM]
+      </mat-list-item>
+      <mat-list-item class="break-all">
+        Transactions Count: {{ block.transactionsCount }}
+      </mat-list-item>
+      <mat-list-item class="break-all">
+        Total Transactions Count: {{ block.totalTransactionsCount }}
+      </mat-list-item>
+    </mat-list>
+  </ng-template>
+</ng-container>

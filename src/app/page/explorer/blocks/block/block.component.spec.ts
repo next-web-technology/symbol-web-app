@@ -1,41 +1,34 @@
-import { OverlayModule } from '@angular/cdk/overlay';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { of } from 'rxjs';
 import { BlockService } from 'src/app/model/block/block.service';
 
-import { BlocksComponent } from './blocks.component';
+import { BlockComponent } from './block.component';
 
-describe('BlocksComponent', () => {
-  let component: BlocksComponent;
-  let fixture: ComponentFixture<BlocksComponent>;
+describe('BlockComponent', () => {
+  let component: BlockComponent;
+  let fixture: ComponentFixture<BlockComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [BlocksComponent],
-      imports: [RouterTestingModule, OverlayModule],
+      declarations: [BlockComponent],
+      imports: [RouterTestingModule],
       providers: [
         {
-          provide: ActivatedRoute,
+          provice: ActivatedRoute,
           useValue: {
-            queryParams: of({
-              pageSize: 10,
-              pageNumber: 1,
-              order: 'descending',
-              orderBy: 'height',
-            }),
+            params: {
+              height: 1,
+            },
           },
         },
-        MatSnackBar,
         BlockService,
       ],
     }).compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(BlocksComponent);
+    fixture = TestBed.createComponent(BlockComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

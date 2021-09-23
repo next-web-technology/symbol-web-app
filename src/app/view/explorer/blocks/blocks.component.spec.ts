@@ -1,4 +1,6 @@
+import { OverlayModule } from '@angular/cdk/overlay';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { ViewBlocksComponent } from './blocks.component';
 
@@ -8,7 +10,9 @@ describe('BlocksComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
+      imports: [OverlayModule],
       declarations: [ViewBlocksComponent],
+      providers: [MatSnackBar],
     }).compileComponents();
   });
 
@@ -16,6 +20,11 @@ describe('BlocksComponent', () => {
     fixture = TestBed.createComponent(ViewBlocksComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+  });
+
+  afterEach(() => {
+    fixture.destroy();
+    TestBed.resetTestingModule();
   });
 
   it('should create', () => {
