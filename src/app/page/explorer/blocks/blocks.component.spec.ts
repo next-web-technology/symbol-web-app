@@ -1,6 +1,10 @@
+import { OverlayModule } from '@angular/cdk/overlay';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
+import { RouterTestingModule } from '@angular/router/testing';
 import { of } from 'rxjs';
+import { BlockService } from 'src/app/model/block/block.service';
 
 import { BlocksComponent } from './blocks.component';
 
@@ -11,6 +15,7 @@ describe('BlocksComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [BlocksComponent],
+      imports: [RouterTestingModule, OverlayModule],
       providers: [
         {
           provide: ActivatedRoute,
@@ -23,6 +28,8 @@ describe('BlocksComponent', () => {
             }),
           },
         },
+        MatSnackBar,
+        BlockService,
       ],
     }).compileComponents();
   });
