@@ -1,2 +1,9 @@
-<p>import works!</p>
-<app-view-import></app-view-import>
+<app-view-import
+  [name]="name$ | async"
+  [address]="address$ | async"
+  [privateKey]="privateKey$ | async"
+  [password]="password$ | async"
+  [isLoading]="isLoading$ | async"
+  [isFormDisabled]="isFormDisabled$ | async"
+  (importWallet)="appImportWallet($event)"
+></app-view-import>
