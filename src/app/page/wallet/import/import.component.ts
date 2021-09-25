@@ -60,14 +60,4 @@ export class ImportComponent implements OnInit {
   navigateToAccountDetailPage(address: string): void {
     this.router.navigate([`/explorer/accounts/${address}`]);
   }
-
-  async removeWallet($event: any): Promise<void> {
-    console.log('removeWallet');
-    this.walletService.removeWallet('Mainnet Wallet 1');
-  }
-
-  async removeAllWallet($event: any): Promise<void> {
-    console.log('removeAllWallet');
-    this.walletService.removeAllWallet();
-  }
 }
