@@ -1,0 +1,107 @@
+<h2>Import Wallet</h2>
+<div class="container mx-auto">
+  <form
+    #formRef="ngForm"
+    (submit)="
+      onImportWallet(
+        nameRef.value,
+        addressRef.value,
+        privateKeyRef.value,
+        passwordRef.value
+      )
+    "
+  >
+    <div class="container flex">
+      <mat-form-field class="flex-grow">
+        <mat-label>Wallet Name</mat-label>
+        <input
+          matInput
+          #nameRef
+          name="name"
+          ngModel
+          [value]="name"
+          required
+          autocomplete="off"
+          [disabled]="isFormDisabled ? true : false"
+        />
+        <mat-hint>You can set it freely</mat-hint>
+      </mat-form-field>
+    </div>
+    <div class="container flex">
+      <mat-form-field class="flex-grow">
+        <mat-label>Address</mat-label>
+        <input
+          matInput
+          #addressRef
+          name="address"
+          ngModel
+          [value]="address"
+          required
+          [minlength]="39"
+          pattern="^[0-9A-Z]+$"
+          autocomplete="off"
+          [disabled]="isFormDisabled ? true : false"
+        />
+        <mat-hint> Paste your address without hyphens. </mat-hint>
+      </mat-form-field>
+    </div>
+    <div class="container flex">
+      <mat-form-field class="flex-grow">
+        <mat-label>Private Key</mat-label>
+        <input
+          matInput
+          #privateKeyRef
+          name="privateKey"
+          ngModel
+          [value]="privateKey"
+          required
+          [minlength]="64"
+          pattern="^[0-9A-Z]+$"
+          type="password"
+          autocomplete="off"
+          [disabled]="isFormDisabled ? true : false"
+        />
+        <mat-hint>
+          Paste your Private Key. It's used on only your browser.
+        </mat-hint>
+      </mat-form-field>
+    </div>
+    <div class="container flex">
+      <mat-form-field class="flex-grow">
+        <mat-label>Password</mat-label>
+        <input
+          matInput
+          #passwordRef
+          name="password"
+          ngModel
+          [value]="password"
+          required
+          [minlength]="8"
+          [type]="isPasswordVisible ? 'text' : 'password'"
+          pattern="^(?=.*?[a-z])(?=.*?[A-Z])(?=.*?\d)[a-zA-Z\d]{8,}$"
+          autocomplete="new-password"
+          [disabled]="isFormDisabled ? true : false"
+        />
+        <button
+          mat-button
+          type="button"
+          matSuffix
+          (click)="onTogglePasswordVisibility()"
+        >
+          <mat-icon>
+            {{ isPasswordVisible ? "visibility" : "visibility_off" }}
+          </mat-icon>
+        </button>
+        <mat-hint>You can set it freely. 0-9a-zA-Z. length >= 8.</mat-hint>
+      </mat-form-field>
+    </div>
+    <button
+      class="container flex-grow"
+      mat-flat-button
+      color="accent"
+      [disabled]="formRef.invalid || isFormDisabled"
+    >
+      Import
+    </button>
+  </form>
+</div>

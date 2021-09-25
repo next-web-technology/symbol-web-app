@@ -12,6 +12,11 @@ const routes: Routes = [
     loadChildren: () =>
       import('./page/explorer/explorer.module').then((m) => m.ExplorerModule),
   },
+  {
+    path: 'wallet',
+    loadChildren: () =>
+      import('./page/wallet/wallet.module').then((m) => m.WalletModule),
+  },
 ];
 
 @NgModule({
