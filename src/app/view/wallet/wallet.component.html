@@ -1,1 +1,190 @@
-<p>view-wallet works!</p>
+<h2>Wallet</h2>
+<div class="container mx-auto">
+  <form
+    #formRef="ngForm"
+    (submit)="
+      onSendTransaction(
+        selectedWalletNameRef.value,
+        addressRef.value,
+        relativeAmountRef.value,
+        messageRef.value,
+        passwordRef.value
+      )
+    "
+  >
+    <div class="flex justify-between">
+      <h3>Select Wallet</h3>
+      <button
+        mat-flat-button
+        color="primary"
+        type="button"
+        (click)="onMoveToWalletImportPage()"
+      >
+        Import
+      </button>
+    </div>
+    <div class="container flex">
+      <mat-form-field class="flex-grow">
+        <mat-label>Select Wallet</mat-label>
+        <mat-select
+          #selectedWalletNameRef
+          [(ngModel)]="selectedWalletName"
+          name="selectedWalletName"
+          [disabled]="isLoading ? isLoading : false"
+          (valueChange)="onSelectedWalletChange($event)"
+        >
+          <mat-option *ngFor="let wallet of wallets" [value]="wallet.name">
+            {{ wallet.name }} : {{ wallet.address }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <h3>Owned Mosaics</h3>
+    <div class="container flex">
+      <div class="flex-wrap mat-elevation-z8">
+        <ng-container
+          *ngIf="
+            mosaics === null || undefined;
+            then emptyMosaics;
+            else existMosaics
+          "
+        ></ng-container>
+        <ng-template #emptyMosaics></ng-template>
+        <ng-template #existMosaics>
+          <table mat-table [dataSource]="mosaics ? mosaics : []">
+            <ng-container matColumnDef="icon">
+              <th mat-header-cell *matHeaderCellDef>Icon</th>
+              <td mat-cell *matCellDef="let element">
+                <ng-container
+                  *ngIf="
+                    element.icon === undefined || null;
+                    then emptyIcon;
+                    else existIcon
+                  "
+                ></ng-container>
+                <ng-template #emptyIcon></ng-template>
+                <ng-template #existIcon>
+                  <img class="object-scale-down" src="{{ element.icon }}" />
+                </ng-template>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="relativeAmount">
+              <th mat-header-cell *matHeaderCellDef>Relative Amount</th>
+              <td mat-cell *matCellDef="let element">
+                {{ element.relativeAmount }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef>Name</th>
+              <td mat-cell *matCellDef="let element">{{ element.name }}</td>
+            </ng-container>
+            <ng-container matColumnDef="id">
+              <th mat-header-cell *matHeaderCellDef>ID</th>
+              <td mat-cell *matCellDef="let element">{{ element.id }}</td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="mosaicsDisplayedColumns"></tr>
+            <tr
+              mat-row
+              *matRowDef="let row; columns: mosaicsDisplayedColumns"
+            ></tr>
+          </table>
+        </ng-template>
+      </div>
+    </div>
+    <h3>Send Transaction</h3>
+    <div class="container flex">
+      <mat-form-field class="flex-grow">
+        <mat-label>To Address</mat-label>
+        <input
+          #addressRef
+          name="address"
+          [(ngModel)]="address"
+          matInput
+          placeholder="Input Address"
+          required
+          [minlength]="39"
+          autocomplete="off"
+          [disabled]="isLoading ? isLoading : false"
+        />
+      </mat-form-field>
+    </div>
+    <div class="container flex">
+      <mat-form-field class="flex-grow">
+        <mat-label>XYM Amount</mat-label>
+        <input
+          #relativeAmountRef
+          name="relativeAmount"
+          [(ngModel)]="relativeAmount"
+          [value]="0"
+          matInput
+          placeholder="Input Relative Amount of XYM to be sent"
+          required
+          type="number"
+          min="0"
+          max="8999999999"
+          autocomplete="off"
+          [disabled]="isLoading ? isLoading : false"
+        />
+        <span matSuffix>XYM</span>
+      </mat-form-field>
+    </div>
+    <div class="container flex">
+      <mat-form-field class="flex-grow">
+        <mat-label>Message</mat-label>
+        <input
+          #messageRef
+          name="message"
+          [(ngModel)]="message"
+          matInput
+          placeholder="Input Plain Message to be sent"
+          autocomplete="off"
+          [disabled]="isLoading ? isLoading : false"
+        />
+      </mat-form-field>
+    </div>
+    <h3>Wallet Password</h3>
+    <div class="container flex">
+      <mat-form-field class="flex-grow">
+        <mat-label>Password</mat-label>
+        <input
+          #passwordRef
+          name="password"
+          ngModel
+          matInput
+          placeholder="Input Wallet Password"
+          required
+          [minlength]="8"
+          [type]="isPasswordVisible ? 'text' : 'password'"
+          pattern="^(?=.*?[a-z])(?=.*?[A-Z])(?=.*?\d)[a-zA-Z\d]{8,}$"
+          autocomplete="password"
+          [disabled]="isLoading ? isLoading : false"
+        />
+        <button
+          mat-button
+          type="button"
+          matSuffix
+          (click)="onTogglePasswordVisibility()"
+          [disabled]="isLoading ? isLoading : false"
+        >
+          <mat-icon>
+            {{ isPasswordVisible ? "visibility" : "visibility_off" }}
+          </mat-icon>
+        </button>
+      </mat-form-field>
+    </div>
+    <button
+      class="container flex-grow"
+      mat-flat-button
+      color="accent"
+      [disabled]="formRef.invalid || isLoading"
+      type="submit"
+    >
+      Send
+    </button>
+  </form>
+  <ng-container *ngIf="isLoading; then loading; else loaded"></ng-container>
+  <ng-template #loading>
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  </ng-template>
+  <ng-template #loaded></ng-template>
+</div>
