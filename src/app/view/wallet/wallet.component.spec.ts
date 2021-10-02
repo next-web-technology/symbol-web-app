@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
 
 import { ViewWalletComponent } from './wallet.component';
 
@@ -9,6 +10,7 @@ describe('ViewWalletComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [ViewWalletComponent],
+      imports: [FormsModule],
     }).compileComponents();
   });
 

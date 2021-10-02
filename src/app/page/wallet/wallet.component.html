@@ -1,2 +1,14 @@
-<p>wallet works!</p>
-<app-view-wallet></app-view-wallet>
+<app-view-wallet
+  [wallets]="wallets$ | async"
+  [selectedWalletName]="selectedWalletName$ | async"
+  [selectedWallet]="selectedWallet$ | async"
+  [account]="account$ | async"
+  [mosaics]="mosaics$ | async"
+  [address]="address$ | async"
+  [relativeAmount]="relativeAmount$ | async"
+  [message]="message$ | async"
+  [isLoading]="isLoading$ | async"
+  (selectedWalletChange)="appSelectedWalletChange($event)"
+  (sendTransaction)="appSendTransaction($event)"
+  (moveToWalletImportPage)="appMoveToWalletImportPage()"
+></app-view-wallet>

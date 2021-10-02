@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import Dexie from 'dexie';
 import { BehaviorSubject } from 'rxjs';
-import { mergeMap } from 'rxjs/operators';
+import { first, mergeMap } from 'rxjs/operators';
 import * as symbolSdk from 'symbol-sdk';
 import { NetworkType } from 'symbol-sdk';
 import { AccountService } from '../account/account.service';
@@ -61,7 +61,7 @@ export class WalletInfrastructureService
     privateKey: string,
     password: string
   ): Promise<void> {
-    this.networkType$.subscribe(async (networkType) => {
+    this.networkType$.pipe(first()).subscribe(async (networkType) => {
       if (this.networkType$ === undefined) {
         throw Error('network type is unknown!');
       }

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 import { WalletService } from 'src/app/model/wallet/wallet.service';
@@ -17,7 +18,11 @@ export class ImportComponent implements OnInit {
   isLoading$ = new BehaviorSubject(false);
   isFormDisabled$ = new BehaviorSubject(false);
 
-  constructor(private router: Router, private walletService: WalletService) {
+  constructor(
+    private router: Router,
+    private walletService: WalletService,
+    private snackBar: MatSnackBar
+  ) {
     this.name$ = new BehaviorSubject('');
     this.address$ = new BehaviorSubject('');
     this.privateKey$ = new BehaviorSubject('');
@@ -41,10 +46,16 @@ export class ImportComponent implements OnInit {
     const wallet = await this.walletService.getWallet(event.name);
     if (wallet === undefined || wallet.address !== event.address) {
       console.error('Wallet import failed!');
+      this.snackBar.open('Wallet import failed!', undefined, {
+        duration: 3000,
+      });
     } else {
       console.log('Wallet import success');
+      this.snackBar.open('Wallet import success', undefined, {
+        duration: 3000,
+      });
       this.resetForm();
-      this.navigateToAccountDetailPage(event.address);
+      this.navigateToAccountDetailPage(event.name);
     }
     this.isLoading$.next(false);
     this.isFormDisabled$.next(false);
@@ -57,7 +68,11 @@ export class ImportComponent implements OnInit {
     this.password$.next('');
   }
 
-  navigateToAccountDetailPage(address: string): void {
-    this.router.navigate([`/explorer/accounts/${address}`]);
+  navigateToAccountDetailPage(walletName: string): void {
+    this.router.navigate(['wallet'], {
+      queryParams: {
+        walletName: walletName,
+      },
+    });
   }
 }
