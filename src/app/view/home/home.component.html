@@ -1,1 +1,132 @@
-<p>view-home works!</p>
+<h2>Home</h2>
+<mat-card>
+  <mat-card-content>
+    <div class="inline-flex">
+      <mat-icon color="warn">warning</mat-icon>
+      <h3>Disclaimer</h3>
+    </div>
+    <ul class="list-disc">
+      <li>This web app is experimental.</li>
+      <li>
+        I cannot be held responsible for any damages caused by using this app.
+      </li>
+      <li>
+        It is recommended that you try it only with an account that has a small
+        balance to allow for incident.
+      </li>
+    </ul>
+  </mat-card-content>
+</mat-card>
+<mat-card>
+  <mat-card-content>
+    <mat-nav-list>
+      <a mat-list-item routerLink="/explorer">
+        <mat-icon>search</mat-icon>
+        <span>Explorer</span>
+      </a>
+    </mat-nav-list>
+    <ul class="list-disc">
+      <li>Account List</li>
+      <li>Account Detail Page</li>
+      <li>Block List, Latest Block Height, Finalized Block Height</li>
+      <li>Block Detail Page</li>
+      <li>Transaction List ... Coming Soon!</li>
+      <li>Transaction Detail Page ... Coming Soon!</li>
+    </ul>
+  </mat-card-content>
+</mat-card>
+<mat-card>
+  <mat-card-content>
+    <mat-nav-list>
+      <a mat-list-item routerLink="/wallet">
+        <mat-icon>account_balance_wallet</mat-icon>
+        <span>Wallet</span>
+      </a>
+    </mat-nav-list>
+    <ul class="list-disc">
+      <li>Import Wallet</li>
+      <li>Send Transaction</li>
+      <li>Receive Transaction ... Coming Soon!</li>
+    </ul>
+  </mat-card-content>
+</mat-card>
+<mat-card>
+  <mat-card-content>
+    <div class="inline-flex">
+      <mat-icon>lightbulb</mat-icon>
+      <h3>Wallet Hint</h3>
+    </div>
+    <ul class="list-disc">
+      <li>
+        This wallet does not provide the feature to generate a new account.
+      </li>
+      <li>You need to import an existing account that has a balance.</li>
+      <li>
+        When importing, you need to specify the wallet name, address, private
+        key, and password.
+      </li>
+      <li>
+        The private key, encrypted with the specified password, is stored in an
+        IndexedDB that is readable only on your device's browser.
+      </li>
+      <li>
+        No information about the private key or password is stored on the server
+        side.
+      </li>
+      <li>
+        In general, the IndexedDB will disappear when you close your browser or
+        reboot your device. Please do not lose your private key and password
+        information outside of this application.
+      </li>
+    </ul>
+  </mat-card-content>
+</mat-card>
+<mat-card>
+  <mat-card-content>
+    <div class="inline-flex">
+      <mat-icon>volunteer_activism</mat-icon>
+      <h3>Support the developer with harvest on the developer's node</h3>
+    </div>
+    <mat-nav-list>
+      <a
+        mat-list-item
+        href="https://symbol-sakura-16.next-web-technology.com:3001/node/info"
+      >
+        https://symbol-sakura-16.next-web-technology.com:3001/node/info
+      </a>
+    </mat-nav-list>
+  </mat-card-content>
+</mat-card>
+<mat-card>
+  <mat-card-content>
+    <div class="inline-flex">
+      <mat-icon>volunteer_activism</mat-icon>
+      <h3>Donate to the developer with this web wallet</h3>
+    </div>
+    <mat-nav-list>
+      <a
+        mat-list-item
+        [routerLink]="['/wallet']"
+        [queryParams]="{
+          address: 'NCW4KHESLG6KZAK6XZCYSF7T4QIRATPK74RRUQA',
+          relativeAmount: 3.9,
+          message: 'Message for the developer.'
+        }"
+      >
+        Donate with this web wallet.
+      </a>
+    </mat-nav-list>
+  </mat-card-content>
+</mat-card>
+<mat-card>
+  <mat-card-content>
+    <div class="inline-flex">
+      <mat-icon>volunteer_activism</mat-icon>
+      <h3>Donate to the developer with official wallet</h3>
+    </div>
+    <img
+      src="/assets/invoice_qr_for_developper.png"
+      alt="invoice_qr_for_developer"
+    />
+  </mat-card-content>
+</mat-card>
