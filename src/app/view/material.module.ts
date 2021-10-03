@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
+import { CdkTreeModule } from '@angular/cdk/tree';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
@@ -42,6 +43,7 @@ import { MatTreeModule } from '@angular/material/tree';
   declarations: [],
   imports: [CommonModule],
   exports: [
+    CdkTreeModule,
     MatAutocompleteModule,
     MatBadgeModule,
     MatBottomSheetModule,

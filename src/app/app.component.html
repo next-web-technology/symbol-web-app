@@ -1,11 +1,70 @@
-<div class="flex-grow">
-  <mat-toolbar>
-    <div class="flex-row">
-      <mat-icon>menu</mat-icon>
-      <h1 class="inline-flex">Symbol Web App</h1>
+<mat-drawer-container class="h-full">
+  <mat-drawer
+    #drawer
+    [mode]="(drawerMode$ | async) || 'side'"
+    [opened]="drawerOpend$ | async"
+  >
+    <div class="flex-grow">
+      <mat-toolbar>
+        <div class="flex-row">
+          <h1 class="inline-flex">Symbol Web App</h1>
+        </div>
+      </mat-toolbar>
     </div>
-  </mat-toolbar>
-</div>
-<div class="flex-grow">
-  <router-outlet></router-outlet>
-</div>
+    <mat-nav-list>
+      <cdk-tree [dataSource]="dataSource" [treeControl]="treeControl">
+        <cdk-tree-node
+          *cdkTreeNodeDef="let node"
+          cdkTreeNodePadding
+          [style.display]="shouldRender(node) ? 'flex' : 'none'"
+          class="flex"
+        >
+          <button mat-icon-button disabled></button>
+          <a mat-list-item routerLink="{{ node.link }}">
+            <mat-icon>{{ node.icon }}</mat-icon>
+            {{ node.name }}
+          </a>
+        </cdk-tree-node>
+        <cdk-tree-node
+          *cdkTreeNodeDef="let node; when: hasChild"
+          cdkTreeNodePadding
+          [style.display]="shouldRender(node) ? 'flex' : 'none'"
+          class="flex"
+        >
+          <button
+            mat-icon-button
+            cdkTreeNodeToggle
+            [attr.aria-label]="'Toggle ' + node.name"
+            (click)="node.isExpanded = !node.isExpanded"
+            [style.visibility]="node.expandable ? 'visible' : 'hidden'"
+          >
+            <mat-icon class="mat-icon-rtl-mirror">
+              {{
+                treeControl.isExpanded(node) ? "expand_more" : "chevron_right"
+              }}
+            </mat-icon>
+          </button>
+          <a mat-list-item routerLink="{{ node.link }}">
+            <mat-icon>{{ node.icon }}</mat-icon>
+            {{ node.name }}
+          </a>
+        </cdk-tree-node>
+      </cdk-tree>
+    </mat-nav-list>
+  </mat-drawer>
+  <mat-drawer-content>
+    <div class="flex-grow">
+      <mat-toolbar>
+        <div class="inline-flex sm:hidden md:hidden lg:hidden xl:hidden">
+          <button mat-flat-button (click)="toggleSideNav()">
+            <mat-icon>menu</mat-icon>
+          </button>
+          <h1 class="inline-flex">Symbol Web App</h1>
+        </div>
+      </mat-toolbar>
+    </div>
+    <div class="flex-grow">
+      <router-outlet></router-outlet>
+    </div>
+  </mat-drawer-content>
+</mat-drawer-container>
