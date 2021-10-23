@@ -1,9 +1,9 @@
 import { ArrayDataSource } from '@angular/cdk/collections';
 import { FlatTreeControl } from '@angular/cdk/tree';
-import { Component, NgZone, OnInit } from '@angular/core';
-import { MatDrawerMode } from '@angular/material/sidenav';
-import { Router } from '@angular/router';
-import { BehaviorSubject } from 'rxjs';
+import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
+import { MatDrawerMode, MatSidenav } from '@angular/material/sidenav';
+import { NavigationEnd, Router } from '@angular/router';
+import { BehaviorSubject, combineLatest } from 'rxjs';
 
 interface NavigationMenu {
   icon: string;
@@ -76,12 +76,23 @@ export class AppComponent implements OnInit {
   );
   dataSource = new ArrayDataSource(this.navigationMenuList);
 
+  @ViewChild('drawer')
+  sidenav!: MatSidenav;
+
   constructor(private router: Router, private ngZone: NgZone) {
-    window.onresize = (e) => {
+    window.onresize = (_) => {
       ngZone.run(() => {
         this.handleResizeWindow(window.innerWidth);
       });
     };
+
+    combineLatest([this.drawerMode$, this.router.events]).subscribe(
+      ([drawerMode, event]) => {
+        if (drawerMode === 'over' && event instanceof NavigationEnd) {
+          this.sidenav?.close();
+        }
+      }
+    );
   }
 
   ngOnInit() {
@@ -90,8 +101,10 @@ export class AppComponent implements OnInit {
 
   handleResizeWindow(width: number): void {
     if (width < 640) {
+      this.drawerMode$.next('over');
       this.drawerOpend$.next(false);
     } else {
+      this.drawerMode$.next('side');
       this.drawerOpend$.next(true);
     }
   }
