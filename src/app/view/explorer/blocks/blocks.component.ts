@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable } from 'rxjs';
@@ -9,7 +9,7 @@ import { Blocks } from 'src/app/model/block/block.model';
   templateUrl: './blocks.component.html',
   styleUrls: ['./blocks.component.css'],
 })
-export class ViewBlocksComponent implements OnInit {
+export class ViewBlocksComponent {
   blocksDisplayedColumns = ['height', 'timestamp', 'hash'];
 
   @Input() pageSizeOptions?: number[];
@@ -18,16 +18,12 @@ export class ViewBlocksComponent implements OnInit {
   @Input() pageLength$?: Observable<number>;
   @Input() order$?: Observable<string>;
   @Input() orderBy$?: Observable<string>;
-  @Input() blocks$?: Observable<Blocks>;
+  @Input() blocks$?: Observable<Blocks | undefined>;
 
   @Output() moveToBlockDetailPage = new EventEmitter<bigint>();
   @Output() blocksPagenationChange = new EventEmitter<PageEvent>();
 
   constructor(private readonly snackBar: MatSnackBar) {}
-
-  ngOnInit(): void {
-    console.log('ngOnInit ViewBlocksComponent');
-  }
 
   onMoveToBlockDetailPage(height: string): void {
     if (BigInt(height) !== BigInt(0)) {

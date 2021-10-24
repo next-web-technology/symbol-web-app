@@ -179,3 +179,153 @@ export const MAINNET_HTTP_NODES: Node[] = [
     port: 3000,
   },
 ];
+
+export const TESTNET_HTTPS_NODES: Node[] = [
+  {
+    network: 'testnet',
+    protocol: 'https',
+    domain: 'symbol-test.next-web-technology.com',
+    port: 3001,
+  },
+  {
+    network: 'testnet',
+    protocol: 'https',
+    domain: 'sym-test-01.opening-line.jp',
+    port: 3001,
+  },
+  {
+    network: 'testnet',
+    protocol: 'https',
+    domain: 'sym-test-02.opening-line.jp',
+    port: 3001,
+  },
+  {
+    network: 'testnet',
+    protocol: 'https',
+    domain: 'sym-test-03.opening-line.jp',
+    port: 3001,
+  },
+  {
+    network: 'testnet',
+    protocol: 'https',
+    domain: 'sym-test-04.opening-line.jp',
+    port: 3001,
+  },
+  {
+    network: 'testnet',
+    protocol: 'https',
+    domain: 'sym-test-05.opening-line.jp',
+    port: 3001,
+  },
+  {
+    network: 'testnet',
+    protocol: 'https',
+    domain: 'sym-test-06.opening-line.jp',
+    port: 3001,
+  },
+  {
+    network: 'testnet',
+    protocol: 'https',
+    domain: 'sym-test-07.opening-line.jp',
+    port: 3001,
+  },
+  {
+    network: 'testnet',
+    protocol: 'https',
+    domain: 'sym-test-08.opening-line.jp',
+    port: 3001,
+  },
+  {
+    network: 'testnet',
+    protocol: 'https',
+    domain: 'sym-test-09.opening-line.jp',
+    port: 3001,
+  },
+  {
+    network: 'testnet',
+    protocol: 'https',
+    domain: 'sym-test-10.opening-line.jp',
+    port: 3001,
+  },
+  {
+    network: 'testnet',
+    protocol: 'https',
+    domain: 'sym-test.opening-line.jp',
+    port: 3001,
+  },
+];
+
+export const TESTNET_HTTP_NODES: Node[] = [
+  {
+    network: 'testnet',
+    protocol: 'http',
+    domain: 'symbol-test.next-web-technology.com',
+    port: 3000,
+  },
+  {
+    network: 'testnet',
+    protocol: 'http',
+    domain: 'sym-test-01.opening-line.jp',
+    port: 3000,
+  },
+  {
+    network: 'testnet',
+    protocol: 'http',
+    domain: 'sym-test-02.opening-line.jp',
+    port: 3000,
+  },
+  {
+    network: 'testnet',
+    protocol: 'http',
+    domain: 'sym-test-03.opening-line.jp',
+    port: 3000,
+  },
+  {
+    network: 'testnet',
+    protocol: 'http',
+    domain: 'sym-test-04.opening-line.jp',
+    port: 3000,
+  },
+  {
+    network: 'testnet',
+    protocol: 'http',
+    domain: 'sym-test-05.opening-line.jp',
+    port: 3000,
+  },
+  {
+    network: 'testnet',
+    protocol: 'http',
+    domain: 'sym-test-06.opening-line.jp',
+    port: 3000,
+  },
+  {
+    network: 'testnet',
+    protocol: 'http',
+    domain: 'sym-test-07.opening-line.jp',
+    port: 3000,
+  },
+  {
+    network: 'testnet',
+    protocol: 'http',
+    domain: 'sym-test-08.opening-line.jp',
+    port: 3000,
+  },
+  {
+    network: 'testnet',
+    protocol: 'http',
+    domain: 'sym-test-09.opening-line.jp',
+    port: 3000,
+  },
+  {
+    network: 'testnet',
+    protocol: 'http',
+    domain: 'sym-test-10.opening-line.jp',
+    port: 3000,
+  },
+  {
+    network: 'testnet',
+    protocol: 'http',
+    domain: 'sym-test.opening-line.jp',
+    port: 3000,
+  },
+];

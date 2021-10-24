@@ -10,8 +10,10 @@ import {
 export interface InterfaceTransactionInfrastructureService {
   sendTransaction$: (
     transaction: Transaction
-  ) => Observable<TransactionAnnounceResponse>;
-  monitorTransaction$: (hash: string) => Observable<TransactionMonitorResponse>;
+  ) => Observable<TransactionAnnounceResponse> | undefined;
+  monitorTransaction$: (
+    hash: string
+  ) => Observable<TransactionMonitorResponse> | undefined;
 }
 
 @Injectable({
@@ -24,11 +26,13 @@ export class TransactionService {
 
   sendTransaction$(
     transaction: Transaction
-  ): Observable<TransactionAnnounceResponse> {
+  ): Observable<TransactionAnnounceResponse> | undefined {
     return this.transactionInfrastructureService.sendTransaction$(transaction);
   }
 
-  monitorTransaction$(hash: string): Observable<TransactionMonitorResponse> {
+  monitorTransaction$(
+    hash: string
+  ): Observable<TransactionMonitorResponse> | undefined {
     return this.transactionInfrastructureService.monitorTransaction$(hash);
   }
 }

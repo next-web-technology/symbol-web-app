@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
 import { Block } from 'src/app/model/block/block.model';
 import { BlockService } from 'src/app/model/block/block.service';
@@ -10,9 +10,9 @@ import { BlockService } from 'src/app/model/block/block.service';
   templateUrl: './block.component.html',
   styleUrls: ['./block.component.css'],
 })
-export class BlockComponent implements OnInit {
+export class BlockComponent {
   height$?: Observable<bigint>;
-  block$?: Observable<Block>;
+  block$?: Observable<Block | undefined>;
 
   constructor(
     private route: ActivatedRoute,
@@ -21,13 +21,12 @@ export class BlockComponent implements OnInit {
     this.height$ = this.route.params.pipe(map((params) => params.height));
     this.block$ = this.height$?.pipe(
       mergeMap((height) => {
-        return this.blockService.getBlock$(height);
+        const blocks$ = this.blockService.getBlock$(height);
+        if (blocks$ === undefined) {
+          return of(undefined);
+        }
+        return blocks$;
       })
     );
-  }
-
-  ngOnInit(): void {
-    console.log('ngOnInit BlockComponent');
-    this.block$?.subscribe((block) => console.log(block));
   }
 }

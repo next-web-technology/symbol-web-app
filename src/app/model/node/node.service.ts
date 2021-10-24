@@ -4,7 +4,7 @@ import { NodeInfrastructureService } from './node-infrastructure.service';
 import { Node } from './node.model';
 
 export interface InterfaceNodeInfrastructureService {
-  getNodes$: () => BehaviorSubject<Node[]>;
+  getNodes$: (network: 'mainnet' | 'testnet') => BehaviorSubject<Node[]>;
 }
 
 @Injectable({
@@ -12,22 +12,40 @@ export interface InterfaceNodeInfrastructureService {
 })
 export class NodeService {
   network$: BehaviorSubject<string> = new BehaviorSubject('mainnet');
-  nodes$: BehaviorSubject<Node[]>;
-  node$: BehaviorSubject<Node>;
-  nodeUrls$: BehaviorSubject<string[]>;
-  nodeUrl$: BehaviorSubject<string>;
+  nodes$?: BehaviorSubject<Node[]>;
+  node$?: BehaviorSubject<Node>;
+  nodeUrls$?: BehaviorSubject<string[]>;
+  nodeUrl$?: BehaviorSubject<string>;
 
   constructor(private nodeInfrastructureService: NodeInfrastructureService) {
-    this.nodes$ = this.nodeInfrastructureService.getNodes$();
-    this.nodeUrls$ = new BehaviorSubject(
-      this.nodesToNodeUrls(this.nodes$.getValue())
-    );
-    this.node$ = new BehaviorSubject(
-      this.returnRandomNode(this.nodes$.getValue())
-    );
-    this.nodeUrl$ = new BehaviorSubject(
-      this.nodeToNodeUrl(this.node$.getValue())
-    );
+    this.network$.subscribe((network) => {
+      this.nodeInfrastructureService.getNodes$(network).subscribe((nodes) => {
+        if (this.nodes$ instanceof BehaviorSubject) {
+          this.nodes$.next(nodes);
+        } else {
+          this.nodes$ = new BehaviorSubject(nodes);
+        }
+      });
+    });
+    this.nodes$?.subscribe((nodes) => {
+      if (this.nodeUrls$ instanceof BehaviorSubject) {
+        this.nodeUrls$.next(this.nodesToNodeUrls(nodes));
+      } else {
+        this.nodeUrls$ = new BehaviorSubject(this.nodesToNodeUrls(nodes));
+      }
+      if (this.node$ instanceof BehaviorSubject) {
+        this.node$.next(this.returnRandomNode(nodes));
+      } else {
+        this.node$ = new BehaviorSubject(this.returnRandomNode(nodes));
+      }
+      if (this.nodeUrl$ instanceof BehaviorSubject) {
+        this.nodeUrl$.next(this.nodeToNodeUrl(this.node$.getValue()));
+      } else {
+        this.nodeUrl$ = new BehaviorSubject(
+          this.nodeToNodeUrl(this.node$.getValue())
+        );
+      }
+    });
   }
 
   nodeToNodeUrl(node: Node): string {
@@ -44,20 +62,38 @@ export class NodeService {
   }
 
   resetRandomNode(): void {
-    this.node$.next(this.returnRandomNode(this.nodes$.getValue()));
-    this.nodeUrl$.next(this.nodeToNodeUrl(this.node$.getValue()));
+    if (this.nodes$ instanceof BehaviorSubject) {
+      this.node$?.next(this.returnRandomNode(this.nodes$.getValue()));
+    }
+    if (this.node$ instanceof BehaviorSubject) {
+      this.nodeUrl$?.next(this.nodeToNodeUrl(this.node$.getValue()));
+    }
+  }
+
+  selectNetwork(network: string): void {
+    if (this.network$ instanceof BehaviorSubject) {
+      this.network$.next(network);
+    } else {
+      this.network$ = new BehaviorSubject(network);
+    }
   }
 
   selectNode(node: Node): void {
-    this.node$.next(node);
-    this.nodeUrl$.next(this.nodeToNodeUrl(this.node$.getValue()));
+    if (this.node$ instanceof BehaviorSubject) {
+      this.node$.next(node);
+      this.nodeUrl$?.next(this.nodeToNodeUrl(this.node$.getValue()));
+    }
   }
 
   selectNodeUrl(nodeUrl: string): void {
-    this.nodeUrl$.next(nodeUrl);
-    const matchingNode = this.nodes$
-      .getValue()
-      .filter((node) => this.nodeToNodeUrl(node) === nodeUrl)[0];
-    this.node$.next(matchingNode);
+    this.nodeUrl$?.next(nodeUrl);
+    if (this.nodes$ instanceof BehaviorSubject) {
+      const matchingNode = this.nodes$
+        .getValue()
+        .filter((node) => this.nodeToNodeUrl(node) === nodeUrl)[0];
+      if (this.node$ instanceof BehaviorSubject) {
+        this.node$.next(matchingNode);
+      }
+    }
   }
 }
