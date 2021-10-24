@@ -4,7 +4,9 @@ import { MosaicInfrastructureService } from './mosaic-infrastructure.service';
 import { Mosaic } from './mosaic.model';
 
 export interface InterfaceMosaicInfrastructureService {
-  getMosaicsFromAddress$: (address: string) => Observable<Mosaic[]>;
+  getMosaicsFromAddress$: (
+    address: string
+  ) => Observable<Mosaic[] | undefined> | undefined;
 }
 
 @Injectable({
@@ -15,7 +17,9 @@ export class MosaicService {
     private mosaicInfrastructureService: MosaicInfrastructureService
   ) {}
 
-  getMosaicsFromAddress$(address: string): Observable<Mosaic[]> {
+  getMosaicsFromAddress$(
+    address: string
+  ): Observable<Mosaic[] | undefined> | undefined {
     return this.mosaicInfrastructureService.getMosaicsFromAddress$(address);
   }
 }

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Account } from 'src/app/model/account/account.model';
 import { Mosaic } from 'src/app/model/mosaic/mosaic.model';
 import { Wallet } from 'src/app/model/wallet/wallet.model';
@@ -9,7 +9,7 @@ import { TransferXYMWithPlainMessageTransaction } from 'src/app/model/transactio
   templateUrl: './wallet.component.html',
   styleUrls: ['./wallet.component.css'],
 })
-export class ViewWalletComponent implements OnInit {
+export class ViewWalletComponent {
   mosaicsDisplayedColumns: string[] = ['icon', 'relativeAmount', 'name', 'id'];
   isPasswordVisible = false;
 
@@ -29,10 +29,6 @@ export class ViewWalletComponent implements OnInit {
   @Output() moveToWalletImportPage = new EventEmitter();
 
   constructor() {}
-
-  ngOnInit(): void {
-    console.log('ngOnInit ViewWalletComponent');
-  }
 
   onSelectedWalletChange($event: string): void {
     this.selectedWalletChange.emit($event);

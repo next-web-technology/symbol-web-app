@@ -4,53 +4,82 @@
     [mode]="(drawerMode$ | async) || 'side'"
     [opened]="drawerOpend$ | async"
   >
-    <div class="flex-grow">
-      <mat-toolbar>
-        <div class="flex-row">
-          <h1 class="inline-flex">Symbol Web App</h1>
+    <div class="flex flex-col min-h-screen">
+      <div class="flex-grow">
+        <div class="flex-grow">
+          <mat-toolbar>
+            <div class="flex-row">
+              <h1 class="inline-flex">Symbol Web App</h1>
+            </div>
+          </mat-toolbar>
         </div>
-      </mat-toolbar>
-    </div>
-    <mat-nav-list>
-      <cdk-tree [dataSource]="dataSource" [treeControl]="treeControl">
-        <cdk-tree-node
-          *cdkTreeNodeDef="let node"
-          cdkTreeNodePadding
-          [style.display]="shouldRender(node) ? 'flex' : 'none'"
-          class="flex"
-        >
-          <button mat-icon-button disabled></button>
-          <a mat-list-item routerLink="{{ node.link }}">
-            <mat-icon>{{ node.icon }}</mat-icon>
-            {{ node.name }}
-          </a>
-        </cdk-tree-node>
-        <cdk-tree-node
-          *cdkTreeNodeDef="let node; when: hasChild"
-          cdkTreeNodePadding
-          [style.display]="shouldRender(node) ? 'flex' : 'none'"
-          class="flex"
-        >
-          <button
-            mat-icon-button
-            cdkTreeNodeToggle
-            [attr.aria-label]="'Toggle ' + node.name"
-            (click)="node.isExpanded = !node.isExpanded"
-            [style.visibility]="node.expandable ? 'visible' : 'hidden'"
+        <div class="flex-grow">
+          <mat-nav-list>
+            <cdk-tree [dataSource]="dataSource" [treeControl]="treeControl">
+              <cdk-tree-node
+                *cdkTreeNodeDef="let node"
+                cdkTreeNodePadding
+                [style.display]="shouldRender(node) ? 'flex' : 'none'"
+                class="flex"
+              >
+                <button mat-icon-button disabled></button>
+                <a mat-list-item routerLink="{{ node.link }}">
+                  <mat-icon>{{ node.icon }}</mat-icon>
+                  {{ node.name }}
+                </a>
+              </cdk-tree-node>
+              <cdk-tree-node
+                *cdkTreeNodeDef="let node; when: hasChild"
+                cdkTreeNodePadding
+                [style.display]="shouldRender(node) ? 'flex' : 'none'"
+                class="flex"
+              >
+                <button
+                  mat-icon-button
+                  cdkTreeNodeToggle
+                  [attr.aria-label]="'Toggle ' + node.name"
+                  (click)="node.isExpanded = !node.isExpanded"
+                  [style.visibility]="node.expandable ? 'visible' : 'hidden'"
+                >
+                  <mat-icon class="mat-icon-rtl-mirror">
+                    {{
+                      treeControl.isExpanded(node)
+                        ? "expand_more"
+                        : "chevron_right"
+                    }}
+                  </mat-icon>
+                </button>
+                <a mat-list-item routerLink="{{ node.link }}">
+                  <mat-icon>{{ node.icon }}</mat-icon>
+                  {{ node.name }}
+                </a>
+              </cdk-tree-node>
+            </cdk-tree>
+          </mat-nav-list>
+        </div>
+      </div>
+      <ng-container *ngIf="selectedNetwork$ | async as selectedNetwork">
+        <mat-form-field>
+          <mat-label>Select Network</mat-label>
+          <mat-select
+            #selectedNetworkRef
+            [ngModel]="selectedNetwork"
+            name="selectedNetwork"
+            (valueChange)="onSelectedNetworkChange($event)"
           >
-            <mat-icon class="mat-icon-rtl-mirror">
-              {{
-                treeControl.isExpanded(node) ? "expand_more" : "chevron_right"
-              }}
-            </mat-icon>
-          </button>
-          <a mat-list-item routerLink="{{ node.link }}">
-            <mat-icon>{{ node.icon }}</mat-icon>
-            {{ node.name }}
-          </a>
-        </cdk-tree-node>
-      </cdk-tree>
-    </mat-nav-list>
+            <mat-option value="mainnet">Mainnet</mat-option>
+            <mat-option value="testnet">Testnet</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </ng-container>
+      <ng-container *ngIf="selectedNode$ | async as selectedNode">
+        <div class="break-all text-xs">
+          {{ selectedNode.protocol }}://{{ selectedNode.domain }}:{{
+            selectedNode.port
+          }}
+        </div>
+      </ng-container>
+    </div>
   </mat-drawer>
   <mat-drawer-content>
     <div class="flex-grow">

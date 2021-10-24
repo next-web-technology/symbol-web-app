@@ -1,14 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-view-explorer',
   templateUrl: './explorer.component.html',
   styleUrls: ['./explorer.component.css'],
 })
-export class ViewExplorerComponent implements OnInit {
+export class ViewExplorerComponent {
   constructor() {}
-
-  ngOnInit(): void {
-    console.log('ngOnInit ViewExplorerComponent');
-  }
 }

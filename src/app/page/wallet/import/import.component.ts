@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
@@ -10,7 +10,7 @@ import { importedWallet } from 'src/app/view/wallet/import/import.component';
   templateUrl: './import.component.html',
   styleUrls: ['./import.component.css'],
 })
-export class ImportComponent implements OnInit {
+export class ImportComponent {
   name$: BehaviorSubject<string>;
   address$: BehaviorSubject<string>;
   privateKey$: BehaviorSubject<string>;
@@ -29,10 +29,6 @@ export class ImportComponent implements OnInit {
     this.password$ = new BehaviorSubject('');
   }
 
-  ngOnInit(): void {
-    console.log('ngOnInit ImportComponent');
-  }
-
   async appImportWallet(event: importedWallet): Promise<void> {
     this.isLoading$.next(true);
     this.isFormDisabled$.next(true);
@@ -42,7 +38,6 @@ export class ImportComponent implements OnInit {
       event.privateKey,
       event.password
     );
-    console.log('Wallet import try');
     const wallet = await this.walletService.getWallet(event.name);
     if (wallet === undefined || wallet.address !== event.address) {
       console.error('Wallet import failed!');
@@ -50,7 +45,6 @@ export class ImportComponent implements OnInit {
         duration: 3000,
       });
     } else {
-      console.log('Wallet import success');
       this.snackBar.open('Wallet import success', undefined, {
         duration: 3000,
       });

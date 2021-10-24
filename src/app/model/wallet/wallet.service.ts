@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { NodeService } from '../node/node.service';
 import { WalletInfrastructureService } from './wallet-infrastructure.service';
 import { DecryptedWallet, Wallet } from './wallet.model';
 
@@ -9,7 +10,7 @@ export interface InterfaceWalletInfrastructureService {
     privateKey: string,
     password: string
   ) => Promise<void>;
-  getWallets: () => Promise<Wallet[]>;
+  getWallets: (network: string) => Promise<Wallet[]>;
   getWallet: (name: string) => Promise<Wallet | undefined>;
   openWallet: (
     name: string,
@@ -24,7 +25,8 @@ export interface InterfaceWalletInfrastructureService {
 })
 export class WalletService {
   constructor(
-    private walletInfrastructureService: WalletInfrastructureService
+    private walletInfrastructureService: WalletInfrastructureService,
+    private nodeService: NodeService
   ) {}
 
   async setWalletWithPrivateKey(
@@ -42,7 +44,8 @@ export class WalletService {
   }
 
   async getWallets(): Promise<Wallet[]> {
-    return this.walletInfrastructureService.getWallets();
+    const network = this.nodeService.network$.getValue();
+    return this.walletInfrastructureService.getWallets(network);
   }
 
   async getWallet(name: string): Promise<Wallet | undefined> {

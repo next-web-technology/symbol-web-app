@@ -16,71 +16,76 @@ import { InterfaceTransactionInfrastructureService } from './transaction.service
 export class TransactionInfrastructureService
   implements InterfaceTransactionInfrastructureService
 {
-  private repositoryFactoryHttp$: BehaviorSubject<symbolSdk.RepositoryFactoryHttp>;
-  private networkRepository$: BehaviorSubject<symbolSdk.NetworkRepository>;
-  private transactionRepository$: BehaviorSubject<symbolSdk.TransactionRepository>;
-  private receiptRepository$: BehaviorSubject<symbolSdk.ReceiptRepository>;
-  private epochAdjustment$: Observable<number>;
-  private networkType$: Observable<symbolSdk.NetworkType>;
-  private generationHash$: Observable<string>;
-  private networkCurrencies$: Observable<symbolSdk.NetworkCurrencies>;
-  private medianFeeMultiPlier$: Observable<number>;
+  private repositoryFactoryHttp$?: BehaviorSubject<symbolSdk.RepositoryFactoryHttp>;
+  private networkRepository$?: BehaviorSubject<symbolSdk.NetworkRepository>;
+  private transactionRepository$?: BehaviorSubject<symbolSdk.TransactionRepository>;
+  private receiptRepository$?: BehaviorSubject<symbolSdk.ReceiptRepository>;
+  private epochAdjustment$?: Observable<number>;
+  private networkType$?: Observable<symbolSdk.NetworkType>;
+  private generationHash$?: Observable<string>;
+  private networkCurrencies$?: Observable<symbolSdk.NetworkCurrencies>;
+  private medianFeeMultiPlier$?: Observable<number>;
   private transactionMonitorResponse$?: BehaviorSubject<TransactionMonitorResponse>;
 
   constructor(private nodeService: NodeService) {
-    this.repositoryFactoryHttp$ = new BehaviorSubject(
-      new symbolSdk.RepositoryFactoryHttp(this.nodeService.nodeUrl$.getValue())
-    );
-    this.networkRepository$ = new BehaviorSubject(
-      this.repositoryFactoryHttp$.getValue().createNetworkRepository()
-    );
-    this.transactionRepository$ = new BehaviorSubject(
-      this.repositoryFactoryHttp$.getValue().createTransactionRepository()
-    );
-    this.receiptRepository$ = new BehaviorSubject(
-      this.repositoryFactoryHttp$.getValue().createReceiptRepository()
-    );
-    this.epochAdjustment$ = this.repositoryFactoryHttp$.pipe(
-      mergeMap((repositoryFactoryHttp) =>
-        repositoryFactoryHttp.getEpochAdjustment()
-      )
-    );
-    this.networkType$ = this.repositoryFactoryHttp$.pipe(
-      mergeMap((repositoryFactoryHttp) =>
-        repositoryFactoryHttp.getNetworkType()
-      )
-    );
-    this.generationHash$ = this.repositoryFactoryHttp$.pipe(
-      mergeMap((repositoryFactoryHttp) =>
-        repositoryFactoryHttp.getGenerationHash()
-      )
-    );
-    this.networkCurrencies$ = this.repositoryFactoryHttp$.pipe(
-      mergeMap((repositoryFactoryHttp) => repositoryFactoryHttp.getCurrencies())
-    );
-    this.medianFeeMultiPlier$ = this.networkRepository$.pipe(
-      mergeMap((networkRepository) => networkRepository.getTransactionFees()),
-      map((transactionFees) => transactionFees.medianFeeMultiplier)
-    );
-    this.nodeService.nodeUrl$.subscribe((nodeUrl) => {
-      this.repositoryFactoryHttp$.next(
-        new symbolSdk.RepositoryFactoryHttp(nodeUrl)
+    this.nodeService.nodeUrl$?.subscribe((nodeUrl) => {
+      if (this.repositoryFactoryHttp$ instanceof BehaviorSubject) {
+        this.repositoryFactoryHttp$.next(
+          new symbolSdk.RepositoryFactoryHttp(nodeUrl)
+        );
+      } else {
+        this.repositoryFactoryHttp$ = new BehaviorSubject(
+          new symbolSdk.RepositoryFactoryHttp(nodeUrl)
+        );
+      }
+      if (this.networkRepository$ instanceof BehaviorSubject) {
+        this.networkRepository$.next(
+          this.repositoryFactoryHttp$.getValue().createNetworkRepository()
+        );
+      } else {
+        this.networkRepository$ = new BehaviorSubject(
+          this.repositoryFactoryHttp$.getValue().createNetworkRepository()
+        );
+      }
+      if (this.transactionRepository$ instanceof BehaviorSubject) {
+        this.transactionRepository$.next(
+          this.repositoryFactoryHttp$.getValue().createTransactionRepository()
+        );
+      } else {
+        this.transactionRepository$ = new BehaviorSubject(
+          this.repositoryFactoryHttp$.getValue().createTransactionRepository()
+        );
+      }
+      this.epochAdjustment$ = this.repositoryFactoryHttp$.pipe(
+        mergeMap((repositoryFactoryHttp) =>
+          repositoryFactoryHttp.getEpochAdjustment()
+        )
       );
-      this.transactionRepository$.next(
-        this.repositoryFactoryHttp$.getValue().createTransactionRepository()
+      this.networkType$ = this.repositoryFactoryHttp$.pipe(
+        mergeMap((repositoryFactoryHttp) =>
+          repositoryFactoryHttp.getNetworkType()
+        )
       );
-      this.receiptRepository$.next(
-        this.repositoryFactoryHttp$.getValue().createReceiptRepository()
+      this.generationHash$ = this.repositoryFactoryHttp$.pipe(
+        mergeMap((repositoryFactoryHttp) =>
+          repositoryFactoryHttp.getGenerationHash()
+        )
       );
-      this.networkRepository$.next(
-        this.repositoryFactoryHttp$.getValue().createNetworkRepository()
+      this.networkCurrencies$ = this.repositoryFactoryHttp$.pipe(
+        mergeMap((repositoryFactoryHttp) =>
+          repositoryFactoryHttp.getCurrencies()
+        )
+      );
+      this.medianFeeMultiPlier$ = this.networkRepository$.pipe(
+        mergeMap((networkRepository) => networkRepository.getTransactionFees()),
+        map((transactionFees) => transactionFees.medianFeeMultiplier)
       );
     });
   }
 
   sendTransaction$(
     transaction: Transaction
-  ): Observable<TransactionAnnounceResponse> {
+  ): Observable<TransactionAnnounceResponse> | undefined {
     let count = 0;
     const recipientAddress = symbolSdk.Address.createFromRawAddress(
       transaction.address
@@ -96,12 +101,23 @@ export class TransactionInfrastructureService
       walletEncryptedWallet
     );
     const account = wallet.open(new symbolSdk.Password(transaction.password));
+    if (
+      this.epochAdjustment$ === undefined ||
+      this.generationHash$ === undefined ||
+      this.networkCurrencies$ === undefined ||
+      this.networkType$ === undefined ||
+      this.medianFeeMultiPlier$ === undefined ||
+      this.transactionRepository$ == undefined
+    ) {
+      return undefined;
+    }
     const combinedLatest = combineLatest([
       this.epochAdjustment$,
       this.generationHash$,
       this.networkCurrencies$,
       this.networkType$,
       this.medianFeeMultiPlier$,
+      this.transactionRepository$,
     ]);
     return combinedLatest.pipe(
       mergeMap(
@@ -111,6 +127,7 @@ export class TransactionInfrastructureService
           networkCurrencies,
           networkType,
           medianFeeMultiplier,
+          transactionRepository,
         ]) => {
           if (count > 0) {
             throw Error('Transaction Announce has already completed!');
@@ -133,23 +150,22 @@ export class TransactionInfrastructureService
           console.log('Payload', signedTransaction.payload);
           console.log('Transaction Hash', signedTransaction.hash);
           count = count + 1;
-          return this.transactionRepository$
-            .getValue()
-            .announce(signedTransaction)
-            .pipe(
-              map((transactionAnnounceResponse) => {
-                return {
-                  message: transactionAnnounceResponse.message,
-                  hash: signedTransaction.hash,
-                };
-              })
-            );
+          return transactionRepository.announce(signedTransaction).pipe(
+            map((transactionAnnounceResponse) => {
+              return {
+                message: transactionAnnounceResponse.message,
+                hash: signedTransaction.hash,
+              };
+            })
+          );
         }
       )
     );
   }
 
-  monitorTransaction$(hash: string): Observable<TransactionMonitorResponse> {
+  monitorTransaction$(
+    hash: string
+  ): Observable<TransactionMonitorResponse> | undefined {
     const pollingIntervalSeconds = 5;
     const pollingLimitHours = 2;
     const pollingCountLimit = Math.round(
@@ -161,6 +177,9 @@ export class TransactionInfrastructureService
       status: 'Not Found',
     } as TransactionMonitorResponse);
     const timer$ = timer(0, 5 * 1000);
+    if (this.transactionRepository$ === undefined) {
+      return undefined;
+    }
     const unconfirmedTransaction$ = combineLatest([
       timer$,
       this.transactionRepository$,

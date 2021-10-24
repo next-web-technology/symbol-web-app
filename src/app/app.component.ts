@@ -3,7 +3,9 @@ import { FlatTreeControl } from '@angular/cdk/tree';
 import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { MatDrawerMode, MatSidenav } from '@angular/material/sidenav';
 import { NavigationEnd, Router } from '@angular/router';
-import { BehaviorSubject, combineLatest } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
+import { Node } from './model/node/node.model';
+import { NodeService } from './model/node/node.service';
 
 interface NavigationMenu {
   icon: string;
@@ -75,13 +77,20 @@ export class AppComponent implements OnInit {
     (node) => node.expandable
   );
   dataSource = new ArrayDataSource(this.navigationMenuList);
+  selectedNetwork$: BehaviorSubject<string>;
+  selectedNetwork: string = 'mainnet';
+  selectedNode$?: BehaviorSubject<Node>;
 
   @ViewChild('drawer')
   sidenav!: MatSidenav;
 
-  constructor(private router: Router, private ngZone: NgZone) {
+  constructor(
+    private router: Router,
+    private ngZone: NgZone,
+    private nodeService: NodeService
+  ) {
     window.onresize = (_) => {
-      ngZone.run(() => {
+      this.ngZone.run(() => {
         this.handleResizeWindow(window.innerWidth);
       });
     };
@@ -93,6 +102,11 @@ export class AppComponent implements OnInit {
         }
       }
     );
+
+    this.selectedNetwork$ = new BehaviorSubject(
+      this.nodeService.network$.getValue()
+    );
+    this.selectedNode$ = this.nodeService.node$;
   }
 
   ngOnInit() {
@@ -134,5 +148,10 @@ export class AppComponent implements OnInit {
       parent = this.getParentNode(parent);
     }
     return true;
+  }
+
+  onSelectedNetworkChange(selectedNetwork: string): void {
+    this.selectedNetwork$.next(selectedNetwork);
+    this.nodeService.selectNetwork(selectedNetwork);
   }
 }

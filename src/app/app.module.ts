@@ -10,6 +10,7 @@ import { ViewMaterialModule } from './view/material.module';
 import { PageModule } from './page/page.module';
 import { ViewModule } from './view/view.module';
 import { PartModule } from './part/part.module';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [AppComponent],
@@ -17,6 +18,7 @@ import { PartModule } from './part/part.module';
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
+    FormsModule,
     ViewMaterialModule,
     PageModule,
     ViewModule,

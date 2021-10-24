@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
 import { Blocks, BlockSearchCriteria } from 'src/app/model/block/block.model';
 import { BlockService } from 'src/app/model/block/block.service';
@@ -25,7 +25,7 @@ export class BlocksComponent implements OnInit {
       order: 'descending',
       orderBy: 'height',
     } as BlockSearchCriteria);
-  blocks$: Observable<Blocks>;
+  blocks$: Observable<Blocks | undefined>;
 
   constructor(
     private route: ActivatedRoute,
@@ -62,13 +62,20 @@ export class BlocksComponent implements OnInit {
     });
     this.blocks$ = this.blockSearchCriteria$.pipe(
       mergeMap((blockSearchCriteria) => {
-        return this.blockService.getBlocks$(blockSearchCriteria);
+        const blocks$ = this.blockService.getBlocks$(blockSearchCriteria);
+        if (blocks$ === undefined) {
+          return of(undefined);
+        }
+        return blocks$;
       })
     );
   }
 
   ngOnInit(): void {
     this.blocks$.subscribe((blocks) => {
+      if (blocks === undefined) {
+        return;
+      }
       this.pageLength$.next(parseInt(blocks.latestBlockHeight.toString()));
     });
   }

@@ -3,7 +3,6 @@ import Dexie from 'dexie';
 import { BehaviorSubject } from 'rxjs';
 import { first, mergeMap } from 'rxjs/operators';
 import * as symbolSdk from 'symbol-sdk';
-import { NetworkType } from 'symbol-sdk';
 import { AccountService } from '../account/account.service';
 import { NodeService } from '../node/node.service';
 import { DecryptedWallet, Wallet } from './wallet.model';
@@ -15,9 +14,9 @@ import { InterfaceWalletInfrastructureService } from './wallet.service';
 export class WalletInfrastructureService
   implements InterfaceWalletInfrastructureService
 {
-  private repositoryFactoryHttp$: BehaviorSubject<symbolSdk.RepositoryFactoryHttp>;
-  private networkRepository$: BehaviorSubject<symbolSdk.NetworkRepository>;
-  private networkType$ = new BehaviorSubject(NetworkType.MAIN_NET);
+  private repositoryFactoryHttp$?: BehaviorSubject<symbolSdk.RepositoryFactoryHttp>;
+  private networkRepository$?: BehaviorSubject<symbolSdk.NetworkRepository>;
+  private networkType$?: BehaviorSubject<symbolSdk.NetworkType>;
   private db: Dexie;
 
   constructor(
@@ -30,28 +29,36 @@ export class WalletInfrastructureService
       wallets: '++index, &name, &address, encryptedPrivateKey, network',
     });
 
-    this.repositoryFactoryHttp$ = new BehaviorSubject(
-      new symbolSdk.RepositoryFactoryHttp(this.nodeService.nodeUrl$.getValue())
-    );
-    this.networkRepository$ = new BehaviorSubject(
-      this.repositoryFactoryHttp$.getValue().createNetworkRepository()
-    );
-    this.networkRepository$
-      .pipe(mergeMap((networkRepository) => networkRepository.getNetworkType()))
-      .subscribe((networkType) => {
-        if (this.networkType$ === undefined) {
-          this.networkType$ = new BehaviorSubject(networkType);
-        } else {
-          this.networkType$.next(networkType);
-        }
-      });
-    this.nodeService.nodeUrl$.subscribe((nodeUrl) => {
-      this.repositoryFactoryHttp$.next(
-        new symbolSdk.RepositoryFactoryHttp(nodeUrl)
-      );
-      this.networkRepository$.next(
-        this.repositoryFactoryHttp$.getValue().createNetworkRepository()
-      );
+    this.nodeService.nodeUrl$?.subscribe((nodeUrl) => {
+      if (this.repositoryFactoryHttp$ instanceof BehaviorSubject) {
+        this.repositoryFactoryHttp$ = new BehaviorSubject(
+          new symbolSdk.RepositoryFactoryHttp(nodeUrl)
+        );
+      } else {
+        this.repositoryFactoryHttp$ = new BehaviorSubject(
+          new symbolSdk.RepositoryFactoryHttp(nodeUrl)
+        );
+      }
+      if (this.networkRepository$ instanceof BehaviorSubject) {
+        this.networkRepository$.next(
+          this.repositoryFactoryHttp$.getValue().createNetworkRepository()
+        );
+      } else {
+        this.networkRepository$ = new BehaviorSubject(
+          this.repositoryFactoryHttp$.getValue().createNetworkRepository()
+        );
+      }
+      this.networkRepository$
+        .pipe(
+          mergeMap((networkRepository) => networkRepository.getNetworkType())
+        )
+        .subscribe((networkType) => {
+          if (this.networkType$ instanceof BehaviorSubject) {
+            this.networkType$.next(networkType);
+          } else {
+            this.networkType$ = new BehaviorSubject(networkType);
+          }
+        });
     });
   }
 
@@ -61,7 +68,7 @@ export class WalletInfrastructureService
     privateKey: string,
     password: string
   ): Promise<void> {
-    this.networkType$.pipe(first()).subscribe(async (networkType) => {
+    this.networkType$?.pipe(first()).subscribe(async (networkType) => {
       if (this.networkType$ === undefined) {
         throw Error('network type is unknown!');
       }
@@ -99,8 +106,8 @@ export class WalletInfrastructureService
     });
   }
 
-  async getWallets(): Promise<Wallet[]> {
-    return await this.db.table('wallets').toArray();
+  async getWallets(network: string): Promise<Wallet[]> {
+    return await this.db.table('wallets').where({ network: network }).toArray();
   }
 
   async getWallet(name: string): Promise<Wallet | undefined> {

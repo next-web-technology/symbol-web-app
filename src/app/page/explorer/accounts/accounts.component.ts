@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
 import {
   Account,
@@ -15,7 +15,7 @@ import { AccountService } from 'src/app/model/account/account.service';
   templateUrl: './accounts.component.html',
   styleUrls: ['./accounts.component.css'],
 })
-export class AccountsComponent implements OnInit {
+export class AccountsComponent {
   pageSizeOptions = [10, 20, 50, 100];
   pageSize$: BehaviorSubject<number> = new BehaviorSubject(10);
   pageNumber$: BehaviorSubject<number> = new BehaviorSubject(1);
@@ -25,7 +25,7 @@ export class AccountsComponent implements OnInit {
       pageNumber: 1,
     });
   pageLength$: BehaviorSubject<number> = new BehaviorSubject(1000);
-  accounts$: Observable<Account[]>;
+  accounts$: Observable<Account[] | undefined>;
 
   constructor(
     private route: ActivatedRoute,
@@ -52,13 +52,15 @@ export class AccountsComponent implements OnInit {
     );
     this.accounts$ = this.accountSearchCriteria$.pipe(
       mergeMap((accountSearchCriteria) => {
-        return this.accountService.getAccounts$(accountSearchCriteria);
+        const accounts$ = this.accountService.getAccounts$(
+          accountSearchCriteria
+        );
+        if (accounts$ === undefined) {
+          return of(undefined);
+        }
+        return accounts$;
       })
     );
-  }
-
-  ngOnInit(): void {
-    console.log('ngOnInit AccountsComponent');
   }
 
   appMoveToAccountDetailPage(address: string): void {

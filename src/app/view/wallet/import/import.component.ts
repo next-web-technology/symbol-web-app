@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 export interface importedWallet {
   name: string;
@@ -12,7 +12,7 @@ export interface importedWallet {
   templateUrl: './import.component.html',
   styleUrls: ['./import.component.css'],
 })
-export class ViewImportComponent implements OnInit {
+export class ViewImportComponent {
   isPasswordVisible = false;
 
   @Input() name?: string | null;
@@ -26,10 +26,6 @@ export class ViewImportComponent implements OnInit {
 
   constructor() {}
 
-  ngOnInit(): void {
-    console.log('ngOnInit ViewImportComponent');
-  }
-
   onTogglePasswordVisibility(): void {
     this.isPasswordVisible = !this.isPasswordVisible;
   }
@@ -40,7 +36,6 @@ export class ViewImportComponent implements OnInit {
     privateKey: string,
     password: string
   ): void {
-    console.log('setWallet');
     this.importWallet.emit({
       name,
       address,

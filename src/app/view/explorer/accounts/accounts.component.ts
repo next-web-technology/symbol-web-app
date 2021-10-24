@@ -1,6 +1,6 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
-import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { Account } from 'src/app/model/account/account.model';
 
 @Component({
@@ -8,23 +8,19 @@ import { Account } from 'src/app/model/account/account.model';
   templateUrl: './accounts.component.html',
   styleUrls: ['./accounts.component.css'],
 })
-export class ViewAccountsComponent implements OnInit {
+export class ViewAccountsComponent {
   accountsDisplayedColumns = ['address'];
 
   @Input() pageSizeOptions?: number[];
   @Input() pageSize$?: BehaviorSubject<number>;
   @Input() pageNumber$?: BehaviorSubject<number>;
   @Input() pageLength$?: Observable<number>;
-  @Input() accounts$?: Observable<Account[]>;
+  @Input() accounts$?: Observable<Account[] | undefined>;
 
   @Output() moveToAccountDetailPage = new EventEmitter<string>();
   @Output() pagenationChange = new EventEmitter<PageEvent>();
 
   constructor() {}
-
-  ngOnInit(): void {
-    console.log('ngOnInit ViewAccountsComponent');
-  }
 
   onMoveToAccountDetailPage(address: string): void {
     this.moveToAccountDetailPage.emit(address);

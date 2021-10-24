@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
 import { Account } from 'src/app/model/account/account.model';
 import { AccountService } from 'src/app/model/account/account.service';
@@ -20,12 +20,12 @@ import { TransactionService } from 'src/app/model/transaction/transaction.servic
   templateUrl: './wallet.component.html',
   styleUrls: ['./wallet.component.css'],
 })
-export class WalletComponent implements OnInit {
+export class WalletComponent {
   wallets$?: BehaviorSubject<Wallet[]>;
   selectedWalletName$?: BehaviorSubject<string>;
   selectedWallet$?: BehaviorSubject<Wallet>;
-  account$?: Observable<Account>;
-  mosaics$?: Observable<Mosaic[]>;
+  account$?: Observable<Account | undefined>;
+  mosaics$?: Observable<Mosaic[] | undefined>;
   transactionHash$?: Observable<string>;
   address$?: BehaviorSubject<string>;
   relativeAmount$?: BehaviorSubject<number>;
@@ -43,7 +43,6 @@ export class WalletComponent implements OnInit {
   ) {
     this.route.queryParams.subscribe((queryParams) => {
       if (queryParams.walletName) {
-        console.log(queryParams.walletName);
         this.selectedWalletName$ = new BehaviorSubject(queryParams.walletName);
       }
       if (queryParams.address) {
@@ -63,7 +62,6 @@ export class WalletComponent implements OnInit {
         this.wallets$ = new BehaviorSubject(wallets);
         if (this.selectedWalletName$ !== undefined) {
           this.selectedWalletName$.subscribe((selectedWalletName) => {
-            console.log(selectedWalletName);
             this.walletService.getWallet(selectedWalletName).then((wallet) => {
               if (wallet) {
                 if (this.selectedWallet$) {
@@ -73,16 +71,24 @@ export class WalletComponent implements OnInit {
                 }
                 this.account$ = this.selectedWallet$.pipe(
                   mergeMap((selectedWallet) => {
-                    return this.accountService.getAccount$(
+                    const account$ = this.accountService.getAccount$(
                       selectedWallet.address
                     );
+                    if (account$ === undefined) {
+                      return of(undefined);
+                    }
+                    return account$;
                   })
                 );
                 this.mosaics$ = this.selectedWallet$.pipe(
                   mergeMap((selectedWallet) => {
-                    return this.mosaicService.getMosaicsFromAddress$(
+                    const mosaics$ = this.mosaicService.getMosaicsFromAddress$(
                       selectedWallet.address
                     );
+                    if (mosaics$ === undefined) {
+                      return of(undefined);
+                    }
+                    return mosaics$;
                   })
                 );
               }
@@ -92,19 +98,28 @@ export class WalletComponent implements OnInit {
           this.selectedWallet$ = new BehaviorSubject(wallets[0]);
           this.account$ = this.selectedWallet$.pipe(
             mergeMap((selectedWallet) => {
-              return this.accountService.getAccount$(selectedWallet.address);
+              const account$ = this.accountService.getAccount$(
+                selectedWallet.address
+              );
+              if (account$ === undefined) {
+                return of(undefined);
+              }
+              return account$;
             })
           );
           this.mosaics$ = this.selectedWallet$.pipe(
             mergeMap((selectedWallet) => {
-              return this.mosaicService.getMosaicsFromAddress$(
+              const mosaic$ = this.mosaicService.getMosaicsFromAddress$(
                 selectedWallet.address
               );
+              if (mosaic$ === undefined) {
+                return of(undefined);
+              }
+              return mosaic$;
             })
           );
           this.selectedWalletName$ = new BehaviorSubject(wallets[0].name);
           this.selectedWalletName$.subscribe((selectedWalletName) => {
-            console.log(selectedWalletName);
             this.walletService.getWallet(selectedWalletName).then((wallet) => {
               if (wallet) {
                 this.selectedWallet$?.next(wallet);
@@ -116,20 +131,14 @@ export class WalletComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {
-    console.log('ngOnInit WalletComponent');
-  }
-
   appSelectedWalletChange($event: string): void {
     this.selectedWalletName$?.next($event);
   }
 
   appSendTransaction(transaction: Transaction): void {
-    console.log('appSendTransaction');
     this.isLoading$.next(true);
-    this.transactionService.sendTransaction$(transaction).subscribe(
+    this.transactionService.sendTransaction$(transaction)?.subscribe(
       (transactionAnnounceResponse) => {
-        console.log(transactionAnnounceResponse);
         if (transactionAnnounceResponse.hash) {
           this.snackBar.open('Transaction has been announced.', undefined, {
             duration: 5000,
@@ -154,12 +163,8 @@ export class WalletComponent implements OnInit {
     if (hash !== undefined) {
       const subscription = this.transactionService
         .monitorTransaction$(hash)
-        .subscribe(
+        ?.subscribe(
           (transactionMonitorResponse) => {
-            console.log(
-              'transactionMonitorResponse',
-              transactionMonitorResponse
-            );
             if (transactionMonitorResponse.status === 'Not Found') {
               this.snackBar.open(
                 'Waiting for Transaction Confirmed...',
@@ -168,7 +173,6 @@ export class WalletComponent implements OnInit {
                   duration: 5000,
                 }
               );
-              console.log('Transaction is not found!');
             }
             if (transactionMonitorResponse.status === 'Unconfirmed') {
               this.snackBar.open(
@@ -178,15 +182,13 @@ export class WalletComponent implements OnInit {
                   duration: 5000,
                 }
               );
-              console.log('Transaction is unconfirmed!');
             }
             if (transactionMonitorResponse.status === 'Confirmed') {
-              console.log('Transaction is confirmed!');
               this.isLoading$.next(false);
               this.snackBar.open('Transaction has been confirmed!', undefined, {
                 duration: 5000,
               });
-              subscription.unsubscribe();
+              subscription?.unsubscribe();
             }
           },
           (error) => {
@@ -195,9 +197,6 @@ export class WalletComponent implements OnInit {
             this.snackBar.open('Transaction Monitoring Error!', undefined, {
               duration: 5000,
             });
-          },
-          () => {
-            console.log('completed');
           }
         );
     }
